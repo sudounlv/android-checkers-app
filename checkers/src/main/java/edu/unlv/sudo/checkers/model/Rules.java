@@ -100,11 +100,11 @@ public final class Rules {
 
         if (previousMoves.size() > 0) {
             final Location previousLocation = previousMoves.get(previousMoves.size() - 1);
-            if (isJump(previousLocation, move)) {
-                theoreticalPiece = new Piece(piece.getTeam(), previousLocation);
-            } else {
+            final Location prevPrevLocation = previousMoves.size() > 1 ? previousMoves.get(previousMoves.size() - 2) : piece.getLocation();
+            if (!isJump(previousLocation, move) || !isJump(prevPrevLocation, previousLocation)) {
                 return false;
             }
+            theoreticalPiece = new Piece(piece.getTeam(), previousLocation);
         } else {
             theoreticalPiece = piece;
         }
@@ -119,7 +119,7 @@ public final class Rules {
      * @return true if the move is a jump
      */
     public static boolean isJump(final Location location, final Location move) {
-        return Math.abs(move.getX() - move.getY()) > 1;
+        return Math.abs(move.getX() - location.getX()) > 1;
     }
 
     /**
