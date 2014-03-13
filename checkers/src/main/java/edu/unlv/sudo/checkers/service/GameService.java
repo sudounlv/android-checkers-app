@@ -11,11 +11,10 @@ public interface GameService {
 
     /**
      * Issue a move on a game by presenting a new board object.
-     * @param gameId the ID of the game in play
-     * @param board the {@link Board} object representing the move made
+     * @param game the game in play
      * @param listener the {@link Listener} to handle callbacks
      */
-    void move(String gameId, Board board, Listener listener);
+    void move(Game game, Listener listener);
 
     /**
      * Join a game already in progress on a specified team.

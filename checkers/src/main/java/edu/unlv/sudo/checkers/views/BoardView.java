@@ -1,5 +1,6 @@
 package edu.unlv.sudo.checkers.views;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -18,6 +19,8 @@ import edu.unlv.sudo.checkers.model.Location;
 import edu.unlv.sudo.checkers.model.Piece;
 import edu.unlv.sudo.checkers.model.Rules;
 import edu.unlv.sudo.checkers.model.Team;
+import edu.unlv.sudo.checkers.service.GameService;
+import edu.unlv.sudo.checkers.service.impl.GameServiceImpl;
 
 /**
  * This view represents the checkers board.
@@ -50,6 +53,11 @@ public class BoardView extends View {
         setOnTouchListener(new CheckersOnTouchListener(this));
     }
 
+    public BoardView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        setOnTouchListener(new CheckersOnTouchListener(this));
+    }
+
     public void setGame(final Game game) {
         this.game = game;
         invalidate();
@@ -66,11 +74,11 @@ public class BoardView extends View {
     }
 
     public Game getGame() {
-        return game;
+        return this.game;
     }
 
     public int getBoardWidth() {
-        return boardWidth;
+        return this.boardWidth;
     }
 
     @Override
@@ -204,13 +212,49 @@ public class BoardView extends View {
         }
     }
 
-    private class CheckersOnTouchListener implements OnTouchListener {
+    /**
+     * This {@link GameService.Listener} renders game events to the screen.
+     */
+    private class GameListener implements GameService.Listener {
 
-        private BoardView boardView;
+        final Context context;
+
+        /**
+         * Construct a game listener with a context on which to show errors.
+         * @param context the context on which to show errors
+         */
+        public GameListener(final Context context) {
+            this.context = context;
+        }
+
+        @Override
+        public void onGame(Game game) {
+            setGame(game);
+        }
+
+        @Override
+        public void onError(Exception exception) {
+            final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
+            alertBuilder.setTitle("Error");
+            alertBuilder.setMessage("Unable to get game from server: " + exception.getMessage());
+            alertBuilder.show();
+        }
+    }
+
+    /**
+     * This {@link OnTouchListener} handles touches on the checkers game board.
+     */
+    private class CheckersOnTouchListener implements OnTouchListener {
+        private final GameService gameService = GameServiceImpl.getInstance();
+        private final BoardView boardView;
 
         private Piece selectedPiece;
         private List<Location> moves;
 
+        /**
+         * Construct a {@link CheckersOnTouchListener} with the provided {@link BoardView}.
+         * @param boardView the {@link BoardView} to operate upon
+         */
         public CheckersOnTouchListener(final BoardView boardView) {
             this.boardView = boardView;
         }
@@ -244,15 +288,17 @@ public class BoardView extends View {
                 selectedPiece = piece;
                 moves = new ArrayList<>();
             } else if (selectedPiece != null && moves.size() > 0 && moves.get(moves.size() - 1).equals(location)) {
-                game.move(selectedPiece, moves);
+                Rules.move(game, selectedPiece, moves);
+                gameService.move(game, new GameListener(boardView.getContext()));
                 selectedPiece = null;
                 moves = new ArrayList<>();
+                game.clearTurn();
             } else if (selectedPiece != null && Rules.isValidMove(selectedPiece, moves, location, board)) {
                 moves.add(location);
             }
 
-            boardView.setSelectedPiece(selectedPiece);
-            boardView.setMoves(moves);
+            setSelectedPiece(selectedPiece);
+            setMoves(moves);
 
             return true;
         }

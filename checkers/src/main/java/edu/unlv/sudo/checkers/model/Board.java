@@ -17,14 +17,6 @@ public class Board {
     private int spacesPerSide;
     private Set<Piece> pieces;
 
-    public Board() {
-        this(8);
-    }
-
-    public Board(final int spacesPerSide) {
-        this(spacesPerSide, initializePieces(spacesPerSide));
-    }
-
     @JsonCreator
     public Board(@JsonProperty("spacesPerSide") final int spacesPerSide,
                  @JsonProperty("pieces") final Set<Piece> pieces) {

@@ -2,9 +2,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="edu.unlv.sudo.checkers.CheckersBoard" >
-    
+
+    <item android:id="@+id/action_create"
+        android:title="@string/action_create"
+        app:showAsAction="never" />
+
     <item android:id="@+id/action_join"
         android:title="@string/action_join"
-        android:orderInCategory="100"
         app:showAsAction="never" />
+
 </menu>

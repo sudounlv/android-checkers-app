@@ -9,12 +9,4 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
 
-    <TextView
-        android:id="@+id/checkers_turn"
-        android:text="@string/status_turn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/checkers_board"
-        android:layout_alignRight="@id/checkers_board"/>
-
 </RelativeLayout>

@@ -3,7 +3,6 @@
 
     <string name="app_name">Sudo Checkers</string>
     <string name="action_join">Join Game</string>
+    <string name="action_create">Create Game</string>
 
-    <string name="status_turn">Turn:</string>
-    <string name="status_win"> Wins!</string>
 </resources>
