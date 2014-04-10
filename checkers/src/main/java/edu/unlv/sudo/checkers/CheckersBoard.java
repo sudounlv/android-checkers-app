@@ -1,8 +1,13 @@
 package edu.unlv.sudo.checkers;
 
 import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -22,6 +27,7 @@ import edu.unlv.sudo.checkers.views.BoardView;
 public class CheckersBoard extends ActionBarActivity {
 
     private final GameService gameService = GameServiceImpl.getInstance();
+    private static int notificationId = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +88,38 @@ public class CheckersBoard extends ActionBarActivity {
     }
 
     /**
+     * Display a notification to the user
+     * @param title the title of the notification
+     * @param message the message of the notification
+     * @return the ID of the notification
+     */
+    private int showNotification(final String title, final String message) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setContentTitle(title)
+                .setContentText(message);
+
+        final int notificationId = CheckersBoard.notificationId++;
+
+        final Intent intent = new Intent(this, CheckersBoard.class);
+
+        final TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(CheckersBoard.class);
+        stackBuilder.addNextIntent(intent);
+
+        final PendingIntent pendingIntent =
+                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        builder.setContentIntent(pendingIntent);
+
+        final NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(notificationId, builder.build());
+
+        return notificationId;
+    }
+
+    /**
      * This {@link GameService.Listener} renders game events to the screen.
      */
     private class GameListener implements GameService.Listener {
@@ -100,6 +138,8 @@ public class CheckersBoard extends ActionBarActivity {
         public void onGame(Game game) {
             final BoardView boardView = (BoardView) findViewById(R.id.checkers_board);
             boardView.setGame(game);
+
+            showNotification("New Checkers Game Ready", "Game ID: " + game.getId());
         }
 
         @Override
