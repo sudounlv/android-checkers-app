@@ -1,5 +1,6 @@
 package edu.unlv.sudo.checkers;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -7,6 +8,7 @@ import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
@@ -101,6 +103,7 @@ public class CheckersBoard extends ActionBarActivity {
 
         final int notificationId = CheckersBoard.notificationId++;
 
+        //set up the activity stack so that backing out of the application works right
         final Intent intent = new Intent(this, CheckersBoard.class);
 
         final TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -112,6 +115,7 @@ public class CheckersBoard extends ActionBarActivity {
 
         builder.setContentIntent(pendingIntent);
 
+        //get the notification manager and publish this notification
         final NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(notificationId, builder.build());
