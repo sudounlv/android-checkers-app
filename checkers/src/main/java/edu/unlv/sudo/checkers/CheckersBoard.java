@@ -99,7 +99,8 @@ public class CheckersBoard extends ActionBarActivity {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setContentTitle(title)
-                .setContentText(message);
+                .setContentText(message)
+                .setAutoCancel(true);
 
         final int notificationId = CheckersBoard.notificationId++;
 
